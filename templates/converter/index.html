@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocToMD - Convert Word Documents to Markdown</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 DocToMD</h1>
+            <p class="subtitle">Convert Word Documents (.doc, .docx) to Markdown</p>
+        </header>
+
+        <div id="pandoc-status" class="status-banner hidden">
+            <span class="status-icon">⚠️</span>
+            <span class="status-message"></span>
+        </div>
+
+        <main>
+            <div class="upload-section">
+                <div class="upload-box" id="drop-zone">
+                    <div class="upload-icon">📁</div>
+                    <h2>Drag & Drop Files Here</h2>
+                    <p>or click to browse</p>
+                    <p class="upload-info">Maximum 10 files • .doc and .docx only</p>
+                    <input type="file" id="file-input" multiple accept=".doc,.docx" hidden>
+                </div>
+
+                <div id="file-list" class="file-list hidden">
+                    <h3>Selected Files (<span id="file-count">0</span>/10)</h3>
+                    <ul id="files-ul"></ul>
+                    <div class="button-group">
+                        <button id="clear-btn" class="btn btn-secondary">Clear All</button>
+                        <button id="convert-btn" class="btn btn-primary">Convert to Markdown</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="progress-section" class="progress-section hidden">
+                <div class="progress-header">
+                    <div class="spinner"></div>
+                    <span>Converting files...</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <div id="results-section" class="results-section hidden">
+                <h2>✅ Conversion Complete</h2>
+                <div id="results-list" class="results-list"></div>
+                <div class="button-group">
+                    <button id="download-all-btn" class="btn btn-primary">Download All as ZIP</button>
+                    <button id="new-conversion-btn" class="btn btn-secondary">New Conversion</button>
+                </div>
+            </div>
+
+            <div id="error-section" class="error-section hidden">
+                <h2>❌ Error</h2>
+                <p id="error-message"></p>
+                <button id="retry-btn" class="btn btn-primary">Try Again</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by Pandoc • Built with Django REST Framework</p>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>
