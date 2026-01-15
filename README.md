@@ -15,6 +15,7 @@ A web application built with Django REST Framework that converts Word documents 
 
 1. **Python 3.8+**
 2. **Pandoc** - Must be installed on your system
+3. **LibreOffice** - Required for converting .doc files to .docx (optional if you only use .docx files)
 
 ### Installing Pandoc
 
@@ -34,6 +35,27 @@ brew install pandoc
 **Linux (Ubuntu/Debian):**
 ```bash
 sudo apt-get install pandoc
+```
+
+### Installing LibreOffice (for .doc support)
+
+**Windows:**
+Download from https://www.libreoffice.org/download/download/
+
+**macOS:**
+```bash
+brew install --cask libreoffice
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt-get install libreoffice
+```
+
+**Render.com Deployment:**
+Add these packages to your build command or use an apt.txt file with:
+```
+libreoffice
 ```
 
 ## Installation

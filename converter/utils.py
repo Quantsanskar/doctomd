@@ -24,7 +24,7 @@ def check_pandoc_installed():
 
 def convert_doc_to_docx(doc_path: str, output_dir: str = None) -> str:
     """
-    Convert .doc file to .docx using pandoc
+    Convert .doc file to .docx using LibreOffice in headless mode
     
     Args:
         doc_path: Path to the .doc file
@@ -36,20 +36,55 @@ def convert_doc_to_docx(doc_path: str, output_dir: str = None) -> str:
     doc_path = Path(doc_path)
     
     if output_dir:
-        output_path = Path(output_dir) / f"{doc_path.stem}.docx"
+        out_dir = Path(output_dir)
     else:
-        output_path = doc_path.with_suffix('.docx')
+        out_dir = doc_path.parent
+    
+    out_dir.mkdir(parents=True, exist_ok=True)
+    output_path = out_dir / f"{doc_path.stem}.docx"
     
     try:
+        # Try using LibreOffice in headless mode (works on Linux/render.com)
+        # Common locations for LibreOffice executable
+        libreoffice_commands = ['soffice', 'libreoffice', '/usr/bin/soffice', '/usr/bin/libreoffice']
+        
+        command_found = None
+        for cmd in libreoffice_commands:
+            try:
+                result = subprocess.run([cmd, '--version'], capture_output=True, text=True, timeout=10)
+                if result.returncode == 0:
+                    command_found = cmd
+                    break
+            except (FileNotFoundError, subprocess.TimeoutExpired):
+                continue
+        
+        if not command_found:
+            raise Exception(
+                "LibreOffice is not installed. "
+                "Pandoc can convert from DOCX, but not from DOC. "
+                "Try using Word to save your DOC file as DOCX, and convert that with pandoc."
+            )
+        
+        # Run LibreOffice in headless mode to convert .doc to .docx
         result = subprocess.run(
-            ['pandoc', str(doc_path), '-o', str(output_path)],
+            [
+                command_found,
+                '--headless',
+                '--convert-to', 'docx',
+                '--outdir', str(out_dir),
+                str(doc_path)
+            ],
             capture_output=True,
             text=True,
-            timeout=60
+            timeout=120
         )
         
         if result.returncode != 0:
-            raise Exception(f"Pandoc conversion failed: {result.stderr}")
+            raise Exception(f"LibreOffice conversion failed: {result.stderr}")
+        
+        # Verify the output file was created
+        if not output_path.exists():
+            raise Exception(f"Conversion completed but output file not found at {output_path}")
         
         return str(output_path)
     
